@@ -57,12 +57,12 @@ io.on("connection", (socket) => {
           [socket.id]: player
         },
       }
-      console.log(" ==> user " + player.name + "created room: " + player.room);
+      console.log(" ==> user " + player.name + " created room: " + player.room);
 
     } else {
       player.room = data.room;
       rooms[player.room].players[socket.id] = player;
-      console.log(" ==> user " + player.name + "joined room: " + player.room);
+      console.log(" ==> user " + player.name + " joined room: " + player.room);
     }
     socket.join(player.room);
     socket.to(player.room).emit("room:state", rooms[player.room]);
