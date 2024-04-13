@@ -35,6 +35,10 @@ export class StartScene extends Phaser.Scene {
     const centerScreenY = this.cameras.main.centerY;
     this.txtName = new UiTextField(this, centerScreenX, centerScreenY - 100);
     this.txtRoom = new UiTextField(this, centerScreenX, centerScreenY + 150);
+
+
+    this.txtName.setText(this.getRandomName())
+    this.txtRoom.setText("sala")
   }
 
   private createButtons() {
@@ -62,4 +66,29 @@ export class StartScene extends Phaser.Scene {
     });
   }
 
+  private getRandomName() {
+    const names = [
+      "Luna",
+      "Milo",
+      "Nala",
+      "Kai",
+      "Aria",
+      "Leo",
+      "Nova",
+      "Zara",
+      "Finn",
+      "Esme",
+      "Max",
+      "Willow",
+      "Nico",
+      "Maya",
+      "Dex",
+      "Elara",
+      "Rio",
+      "Cleo",
+      "Jax",
+      "Ivy"
+    ];
+    return names[Math.floor(Math.random() * names.length)];
+  }
 }

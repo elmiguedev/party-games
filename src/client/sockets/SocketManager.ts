@@ -6,6 +6,8 @@ export class SocketManager {
   private socket: Socket;
 
   public onRoomState: Function;
+  public onPlayerDisconnect: Function;
+  public onRoomReady: Function;
 
   private constructor() {
     this.socket = io("localhost:3000");
@@ -18,6 +20,13 @@ export class SocketManager {
       if (this.onRoomState) this.onRoomState(roomState);
     })
 
+    this.socket.on("player:disconnect", (playerId: string) => {
+      if (this.onPlayerDisconnect) this.onPlayerDisconnect(playerId);
+    })
+
+    this.socket.on("room:ready", () => {
+      if (this.onRoomReady) this.onRoomReady();
+    })
   }
 
   public static getInstance(): SocketManager {
@@ -29,5 +38,9 @@ export class SocketManager {
 
   public joinRoom(name: string, room?: string) {
     this.socket.emit("join", { name, room });
+  }
+
+  public playerReady() {
+    this.socket.emit("player:ready");
   }
 }

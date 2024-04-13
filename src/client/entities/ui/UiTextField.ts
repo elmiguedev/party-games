@@ -19,6 +19,10 @@ export class UiTextField {
     return this.txt.value;
   }
 
+  public setText(text: string) {
+    this.txt.value = text;
+  }
+
   private createTextInput() {
     this.txt = document.createElement("input");
     this.txt.type = "text";

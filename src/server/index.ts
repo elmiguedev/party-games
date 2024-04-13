@@ -1,8 +1,8 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { Player } from "./states/Player";
-import { Room } from "./states/Room";
+import { Player } from "../states/Player";
+import { Room } from "../states/Room";
 
 const generateRoomKey = () => {
   let result = '';
@@ -11,7 +11,7 @@ const generateRoomKey = () => {
   for (let i = 0; i < 5; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
-  return result;
+  return "sala" // TODO: descomentar cuando se largue result;
 }
 
 const app = express();
@@ -33,6 +33,7 @@ io.on("connection", (socket) => {
     id: socket.id,
     name: "",
     room: "",
+    state: "lobby",
   }
 
   socket.on("disconnect", () => {
@@ -44,6 +45,7 @@ io.on("connection", (socket) => {
         delete rooms[player.room];
       }
     }
+    io.emit("player:disconnect", socket.id);
     console.log("==> current rooms: ", rooms)
   });
 
@@ -56,16 +58,37 @@ io.on("connection", (socket) => {
         players: {
           [socket.id]: player
         },
+        state: "lobby",
       }
       console.log(" ==> user " + player.name + " created room: " + player.room);
+      socket.join(player.room);
 
     } else {
       player.room = data.room;
       rooms[player.room].players[socket.id] = player;
       console.log(" ==> user " + player.name + " joined room: " + player.room);
+      socket.join(player.room);
     }
-    socket.join(player.room);
-    socket.to(player.room).emit("room:state", rooms[player.room]);
+
+    console.log(" ==> la room es " + player.room)
+
+    io.to(player.room).emit("room:state", rooms[player.room]);
+  })
+
+  socket.on("player:ready", () => {
+    rooms[player.room].players[socket.id].state = "ready";
+
+    // check if all room players are ready
+    let ready = true;
+    Object.values(rooms[player.room].players).forEach((player: Player) => {
+      if (player.state !== "ready") ready = false;
+    })
+    if (ready) {
+      rooms[player.room].state = "playing";
+      io.to(player.room).emit("room:ready");
+    }
+
+    io.to(player.room).emit("room:state", rooms[player.room]);
   })
 });
 

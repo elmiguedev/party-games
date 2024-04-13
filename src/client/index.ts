@@ -1,4 +1,5 @@
 import { BootloaderScene } from "./scenes/BootloaderScene";
+import { GameScene } from "./scenes/GameScene";
 import { LobbyScene } from "./scenes/LobbyScene";
 import { StartScene } from "./scenes/StartScene";
 
@@ -11,7 +12,7 @@ const game = new Phaser.Game({
     BootloaderScene,
     StartScene,
     LobbyScene,
-    // GameScene
+    GameScene
   ],
   render: {
     pixelArt: true,
