@@ -1,12 +1,22 @@
 import { Scene } from "phaser";
+import { PikachuMiniGame } from "../minigames/Pikachu/PikachuMiniGame";
+import { SocketManager } from "../sockets/SocketManager";
+import { Room } from "../../states/Room";
 
 export class GameScene extends Scene {
+  private pikachuMiniGame: PikachuMiniGame;
+  private socketManager: SocketManager;
+  private roomState: Room;
+
 
   public constructor() {
     super("GameScene");
   }
 
+  init() {
+  }
+
   create() {
-    this.add.text(20, 20, "A JUGAR")
+    this.pikachuMiniGame = new PikachuMiniGame(this);
   }
 }

@@ -1,22 +1,38 @@
 import io, { Socket } from "socket.io-client";
+import { Room } from "../../states/Room";
+import { Player } from "../../states/Player";
+import { Game } from "../../states/Game";
 
 export class SocketManager {
 
   private static instance: SocketManager;
   private socket: Socket;
 
+  public room: Room;
+  public player: Player;
+  public playerId?: string;
+
   public onRoomState: Function;
   public onPlayerDisconnect: Function;
   public onRoomReady: Function;
+  public onGameFinished: Function;
 
   private constructor() {
     this.socket = io("localhost:3000");
 
     this.socket.on("connect", () => {
       console.log("connected");
+      this.playerId = this.socket.id;
     });
 
     this.socket.on("room:state", (roomState: any) => {
+      this.room = roomState;
+
+      if (this.playerId)
+        this.player = roomState.players[this.socket.id!];
+
+      console.log(roomState, this.playerId)
+
       if (this.onRoomState) this.onRoomState(roomState);
     })
 
@@ -26,6 +42,10 @@ export class SocketManager {
 
     this.socket.on("room:ready", () => {
       if (this.onRoomReady) this.onRoomReady();
+    })
+
+    this.socket.on("game:finished", (game: Game) => {
+      if (this.onGameFinished) this.onGameFinished(game);
     })
   }
 
@@ -42,5 +62,9 @@ export class SocketManager {
 
   public playerReady() {
     this.socket.emit("player:ready");
+  }
+
+  public playerUpdate(gameState: any) {
+    this.socket.emit("player:update", gameState);
   }
 }

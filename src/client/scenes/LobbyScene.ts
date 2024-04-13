@@ -42,7 +42,7 @@ export class LobbyScene extends Scene {
     }
 
     this.socketManager.onRoomReady = () => {
-      this.scene.start("GameScene", { room: this.room });
+      this.scene.start("GameScene");
     }
 
     this.socketManager.joinRoom(name, room);

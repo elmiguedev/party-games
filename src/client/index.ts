@@ -6,14 +6,19 @@ import { StartScene } from "./scenes/StartScene";
 const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: "game",
-  width: 1000,
-  height: 1000,
+  width: 720,
+  height: 720,
   scene: [
     BootloaderScene,
     StartScene,
     LobbyScene,
     GameScene
   ],
+  scale: {
+    width: 720,
+    height: 720,
+  },
+  backgroundColor: "#e7cfb6",
   render: {
     pixelArt: true,
   },

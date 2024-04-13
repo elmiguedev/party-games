@@ -4,4 +4,5 @@ export interface Player {
   name: string;
   room: string;
   state: PlayerState;
+  gameState?: any;
 }

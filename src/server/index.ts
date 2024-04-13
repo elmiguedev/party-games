@@ -3,6 +3,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { Player } from "../states/Player";
 import { Room } from "../states/Room";
+import { Game } from "../states/Game";
 
 const generateRoomKey = () => {
   let result = '';
@@ -13,6 +14,23 @@ const generateRoomKey = () => {
   }
   return "sala" // TODO: descomentar cuando se largue result;
 }
+
+const getRandomGame = () => {
+  const games = ["pikachu", "race"];
+
+  const selectedGame: Game = {
+    state: "playing",
+    type: "pikachu",
+    answer: {
+      x: 200,
+      y: 200
+    }
+  }
+
+  return selectedGame;
+}
+
+
 
 const app = express();
 const httpServer = createServer(app);
@@ -34,6 +52,7 @@ io.on("connection", (socket) => {
     name: "",
     room: "",
     state: "lobby",
+    gameState: {},
   }
 
   socket.on("disconnect", () => {
@@ -85,7 +104,25 @@ io.on("connection", (socket) => {
     })
     if (ready) {
       rooms[player.room].state = "playing";
+      rooms[player.room].game = getRandomGame();
       io.to(player.room).emit("room:ready");
+    }
+
+    io.to(player.room).emit("room:state", rooms[player.room]);
+  })
+
+  socket.on("player:update", (gameState: any) => {
+    rooms[player.room].players[socket.id].gameState = gameState;
+
+    let finished = true;
+    Object.values(rooms[player.room].players).forEach((player: Player) => {
+      if (!player.gameState.ready) finished = false;
+    });
+
+    if (finished) {
+      rooms[player.room].game!.state = "finished";
+      rooms[player.room].game!.winner = rooms[player.room].players[socket.id]; // CAMBIAR POR EL WINNER
+      io.to(player.room).emit("game:finished", rooms[player.room].game);
     }
 
     io.to(player.room).emit("room:state", rooms[player.room]);
