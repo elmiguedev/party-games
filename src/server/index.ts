@@ -171,10 +171,9 @@ io.on("connection", (socket) => {
   })
 });
 
-app.use(express.static("public"));
+console.log(__dirname)
+app.use(express.static(path.join(__dirname, "public")));
 app.get("/", (req, res) => {
-  // res.send("Hola mundo");
-  res.sendFile(path.join(__dirname, "public/index.html"));
-});
-
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+})
 httpServer.listen(3000, () => console.log("Server listening on port 3000"));
