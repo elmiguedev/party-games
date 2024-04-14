@@ -2,6 +2,7 @@ import { BootloaderScene } from "./scenes/BootloaderScene";
 import { GameScene } from "./scenes/GameScene";
 import { LobbyScene } from "./scenes/LobbyScene";
 import { StartScene } from "./scenes/StartScene";
+import { WinnerScene } from "./scenes/WinnerScene";
 
 const game = new Phaser.Game({
   type: Phaser.AUTO,
@@ -12,7 +13,8 @@ const game = new Phaser.Game({
     BootloaderScene,
     StartScene,
     LobbyScene,
-    GameScene
+    GameScene,
+    WinnerScene
   ],
   scale: {
     width: 720,

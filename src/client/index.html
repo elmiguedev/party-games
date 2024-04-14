@@ -25,10 +25,27 @@
       display: block;
       margin: auto;
     }
+
+    @font-face {
+      font-family: ice_pixel_7;
+      src: url('./assets/fonts/ice_pixel_7.ttf') format('truetype');
+      font-weight: 400;
+      font-weight: normal;
+    }
+
+    @font-face {
+      font-family: half_bold_pixel;
+      src: url('./assets/fonts/half_bold_pixel.ttf') format('truetype');
+      font-weight: 400;
+      font-weight: normal;
+    }
   </style>
 </head>
 
 <body>
+  <div style="font-family:ice_pixel_7; position:absolute; left:-1000px; visibility:hidden;">.</div>
+  <div style="font-family:half_bold_pixel; position:absolute; left:-1000px; visibility:hidden;">.</div>
+
   <div class="container">
     <div id="game"></div>
   </div>

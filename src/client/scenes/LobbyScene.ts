@@ -49,17 +49,27 @@ export class LobbyScene extends Scene {
   }
 
   private createRoomInfo() {
-    this.txtRoom = this.add.text(20, 20, "Room: ");
+    const centerX = this.cameras.main.centerX;
+    this.txtRoom = this.add.text(
+      centerX,
+      50,
+      "",
+      {
+        fontSize: "64px",
+        fontFamily: "half_bold_pixel",
+        padding: { x: 10, y: 5 },
+      }).setOrigin(0.5)
   }
 
   private updateRoom() {
-    console.log("SE UPDATEA LA VISTA", this.room, this.room.id)
+    const centerX = this.cameras.main.centerX;
+
     this.txtRoom.setText("Room: " + this.room.id);
     let count = 0;
     Object.values(this.room.players).forEach((player: Player) => {
       if (!this.playerLabels[player.id]) {
-        const y = 100 + (count * 100);
-        const playerLabel = new PlayerLabel(this, 20, y, player);
+        const y = 150 + (count * 100);
+        const playerLabel = new PlayerLabel(this, centerX, y, player);
         this.playerLabels[player.id] = playerLabel;
       } else {
         this.playerLabels[player.id].setPlayer(player);
@@ -70,11 +80,16 @@ export class LobbyScene extends Scene {
   }
 
   private createInitGameButton() {
-    this.waitingLabel = this.add.image(400, 400, "play_waiting_button");
+    const x = this.cameras.main.centerX;
+    const y = this.cameras.main.centerY + 200;
+
+    this.waitingLabel = this.add.image(x, y, "waiting_button");
+    this.waitingLabel.setScale(6);
     this.waitingLabel.setVisible(false);
 
-    this.playButton = this.add.image(400, 400, "play_button");
+    this.playButton = this.add.image(x, y, "play_button");
     this.playButton.setInteractive({ cursor: "pointer" });
+    this.playButton.setScale(6);
     this.playButton.on("pointerdown", () => {
       this.socketManager.playerReady();
       this.playButton.setVisible(false);

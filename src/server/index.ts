@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import { Player } from "../states/Player";
 import { Room } from "../states/Room";
 import { Game } from "../states/Game";
+import path from "path";
 
 const generateRoomKey = () => {
   let result = '';
@@ -16,20 +17,60 @@ const generateRoomKey = () => {
 }
 
 const getRandomGame = () => {
-  const games = ["pikachu", "race"];
-
+  const games = ["robot", "race"];
+  const positions = getRandomRobotPositions();
   const selectedGame: Game = {
     state: "playing",
-    type: "pikachu",
-    answer: {
-      x: 200,
-      y: 200
-    }
+    type: "robot",
+    data: {
+      fakePositions: positions,
+    },
+    answer: positions[positions.length - 1],
   }
 
   return selectedGame;
 }
 
+const getRandomRobotPositions = () => {
+  const minx = 0;
+  const maxx = 720 - (52 * 6);
+
+  const miny = 120;
+  const maxy = 720 - (52 * 6);
+
+  const fakePositions: any[] = []
+  for (let i = 0; i < 8; i++) {
+    const x = Math.floor(Math.random() * (maxx - minx) + minx);
+    const y = Math.floor(Math.random() * (maxy - miny) + miny);
+    fakePositions.push({ x, y });
+  }
+
+  return fakePositions;
+
+}
+
+const getDistance = (x1: number, y1: number, x2: number, y2: number) => {
+  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+}
+
+const checkWinner = (room: Room) => {
+  let winner: Player | undefined = undefined;
+  let winnerDistance = 0;
+  const answer = room.game?.answer;
+  Object.values(room.players).forEach((player) => {
+    const playerPosition = player.gameState.position;
+    const distance = getDistance(playerPosition.x, playerPosition.y, answer.x, answer.y);
+    if (!winner) {
+      winner = player;
+      winnerDistance = distance;
+    } else
+      if (distance < winnerDistance) {
+        winner = player;
+        winnerDistance = distance;
+      }
+  })
+  return winner;
+}
 
 
 const app = express();
@@ -113,6 +154,7 @@ io.on("connection", (socket) => {
 
   socket.on("player:update", (gameState: any) => {
     rooms[player.room].players[socket.id].gameState = gameState;
+    io.to(player.room).emit("player:update", rooms[player.room].players[socket.id]);
 
     let finished = true;
     Object.values(rooms[player.room].players).forEach((player: Player) => {
@@ -121,7 +163,7 @@ io.on("connection", (socket) => {
 
     if (finished) {
       rooms[player.room].game!.state = "finished";
-      rooms[player.room].game!.winner = rooms[player.room].players[socket.id]; // CAMBIAR POR EL WINNER
+      rooms[player.room].game!.winner = checkWinner(rooms[player.room]); // CAMBIAR POR EL WINNER
       io.to(player.room).emit("game:finished", rooms[player.room].game);
     }
 
@@ -129,9 +171,10 @@ io.on("connection", (socket) => {
   })
 });
 
+app.use(express.static("public"));
 app.get("/", (req, res) => {
-
-  res.send("Hola mundo")
+  // res.send("Hola mundo");
+  res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 httpServer.listen(3000, () => console.log("Server listening on port 3000"));

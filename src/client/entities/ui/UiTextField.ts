@@ -35,6 +35,7 @@ export class UiTextField {
   private createTextInput() {
     this.txt = document.createElement("input");
     this.txt.type = "text";
+    this.txt.style.fontFamily = "half_bold_pixel";
     this.txt.style.fontSize = "64px";
     this.txt.style.border = "none";
     this.txt.style.outline = "none";

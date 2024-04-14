@@ -1,10 +1,10 @@
 import { Scene } from "phaser";
-import { PikachuMiniGame } from "../minigames/Pikachu/PikachuMiniGame";
 import { SocketManager } from "../sockets/SocketManager";
 import { Room } from "../../states/Room";
+import { RobotMiniGame } from "../minigames/Robot/RobotMiniGame";
 
 export class GameScene extends Scene {
-  private pikachuMiniGame: PikachuMiniGame;
+  private robotMiniGame: RobotMiniGame;
   private socketManager: SocketManager;
   private roomState: Room;
 
@@ -17,6 +17,10 @@ export class GameScene extends Scene {
   }
 
   create() {
-    this.pikachuMiniGame = new PikachuMiniGame(this);
+    this.robotMiniGame = new RobotMiniGame(this);
+    this.robotMiniGame.onFinish = () => {
+      this.robotMiniGame.destroy();
+      this.scene.start("WinnerScene");
+    }
   }
 }

@@ -16,6 +16,7 @@ export class SocketManager {
   public onPlayerDisconnect: Function;
   public onRoomReady: Function;
   public onGameFinished: Function;
+  public onPlayerUpdate: Function;
 
   private constructor() {
     this.socket = io("localhost:3000");
@@ -46,6 +47,10 @@ export class SocketManager {
 
     this.socket.on("game:finished", (game: Game) => {
       if (this.onGameFinished) this.onGameFinished(game);
+    })
+
+    this.socket.on("player:update", (player: any) => {
+      if (this.onPlayerUpdate) this.onPlayerUpdate(player);
     })
   }
 

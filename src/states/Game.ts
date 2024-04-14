@@ -1,5 +1,5 @@
 import { Player } from "./Player";
-export type GameType = "pikachu" | "race"
+export type GameType = "robot" | "race"
 export type GameState = "playing" | "finished"
 
 export interface Game {
@@ -7,4 +7,5 @@ export interface Game {
   state: GameState;
   winner?: Player;
   answer: any;
+  data: any;
 }
